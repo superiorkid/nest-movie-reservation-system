@@ -27,4 +27,8 @@ export class UserRepository {
     const { email, password, username } = createUserDTO;
     return this.db.user.create({ data: { username, email, password } });
   }
+
+  async updateRefreshToken(id: string, refreshToken: string | null) {
+    return this.db.user.update({ where: { id }, data: { refreshToken } });
+  }
 }

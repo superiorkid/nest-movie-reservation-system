@@ -1,10 +1,19 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { User } from 'generated/prisma';
-import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
-import { AuthenticationService } from './authentication.service';
 import { Public } from 'src/common/decorators/public.decorator';
+import { JwtRefreshAuthGuard } from 'src/common/guards/jwt-refresh-auth.guard';
+import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
 import { CreateUserDTO } from '../users/users.dto';
+import { AuthenticationService } from './authentication.service';
 
 @Controller('auth')
 export class AuthenticationController {
@@ -20,5 +29,19 @@ export class AuthenticationController {
   @Post('sign-in')
   async login(@Req() req: Request) {
     return this.authService.login(req.user as User);
+  }
+
+  @Delete('sign-out')
+  async logout(@Req() req: Request) {
+    return this.authService.logout(req.user?.['sub']);
+  }
+
+  @Public()
+  @UseGuards(JwtRefreshAuthGuard)
+  @Get('refresh')
+  async refresh(@Req() req: Request) {
+    const userId = req.user?.['sub'];
+    const refreshToken = req.user?.['refreshToken'];
+    return this.authService.refreshToken(userId, refreshToken);
   }
 }

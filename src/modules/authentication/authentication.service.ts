@@ -1,11 +1,13 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'generated/prisma';
+import { UserPayload } from 'src/common/interfaces/user-payload.interface';
 import { EncryptService } from 'src/shared/encrypt/encrypt.service';
 import { CreateUserDTO } from '../users/users.dto';
 import { UserRepository } from '../users/users.repository';
@@ -30,8 +32,7 @@ export class AuthenticationService {
     return user;
   }
 
-  async login(user: User) {
-    const payload = { sub: user.id, email: user.email, role: user.role };
+  async generateTokens(payload: UserPayload) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, {
@@ -41,12 +42,22 @@ export class AuthenticationService {
     ]);
 
     return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    };
+  }
+
+  async login(user: User) {
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const tokens = await this.generateTokens(payload);
+    const hashedRefreshToken = await this.encryptService.hash(
+      tokens.refresh_token,
+    );
+    await this.userRepository.updateRefreshToken(user.id, hashedRefreshToken);
+    return {
       success: true,
-      message: 'Login successfully',
-      data: {
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      },
+      message: 'User login successfully',
+      data: tokens,
     };
   }
 
@@ -75,5 +86,35 @@ export class AuthenticationService {
         'Something went wrong. Failed to register.',
       );
     }
+  }
+
+  async logout(userId: string) {
+    await this.userRepository.updateRefreshToken(userId, null);
+    return {
+      success: true,
+      message: 'Logou successfully',
+    };
+  }
+
+  async refreshToken(userId: string, refreshToken: string) {
+    const user = await this.userRepository.findOneById(userId);
+    if (!user || !user.refreshToken)
+      throw new ForbiddenException('Access denied.');
+    const refreshTokenMatches = await this.encryptService.verify(
+      user.refreshToken,
+      refreshToken,
+    );
+    if (!refreshTokenMatches) throw new ForbiddenException('Access denied.');
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const tokens = await this.generateTokens(payload);
+    const hashedRefreshToken = await this.encryptService.hash(
+      tokens.refresh_token,
+    );
+    await this.userRepository.updateRefreshToken(user.id, hashedRefreshToken);
+    return {
+      success: true,
+      message: 'Generate refresh token successfully',
+      data: tokens,
+    };
   }
 }
