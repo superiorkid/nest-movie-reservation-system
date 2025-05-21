@@ -15,5 +15,5 @@ export class CreateUserDTO {
   password: string;
 
   @Match(CreateUserDTO, (object) => object.password)
-  confirmPassowrd: string;
+  confirmPassword: string;
 }
