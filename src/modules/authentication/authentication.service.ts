@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'generated/prisma';
 import { UserPayload } from 'src/common/interfaces/user-payload.interface';
 import { EncryptService } from 'src/shared/encrypt/encrypt.service';
 import { CreateUserDTO } from '../users/users.dto';
 import { UserRepository } from '../users/users.repository';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthenticationService {

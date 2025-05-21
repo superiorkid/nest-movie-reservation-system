@@ -8,12 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { User } from 'generated/prisma';
 import { Public } from 'src/common/decorators/public.decorator';
 import { JwtRefreshAuthGuard } from 'src/common/guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
 import { CreateUserDTO } from '../users/users.dto';
 import { AuthenticationService } from './authentication.service';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthenticationController {
