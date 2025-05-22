@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { UserPayload } from 'src/common/interfaces/user-payload.interface';
 import { EncryptService } from 'src/shared/encrypt/encrypt.service';
 import { CreateUserDTO } from '../users/users.dto';
 import { UserRepository } from '../users/users.repository';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthenticationService {
@@ -64,11 +64,11 @@ export class AuthenticationService {
   async register(createUserDto: CreateUserDTO) {
     const { email, password, username } = createUserDto;
     const existingEmail = await this.userRepository.findOneByEmail(email);
-    if (!existingEmail) throw new BadRequestException('Email already in use.');
+    if (existingEmail) throw new BadRequestException('Email already in use.');
 
     const existingUsername =
       await this.userRepository.findOnebyUsername(username);
-    if (!existingUsername)
+    if (existingUsername)
       throw new BadRequestException('Username already in use.');
 
     const hashedPassword = await this.encryptService.hash(password);

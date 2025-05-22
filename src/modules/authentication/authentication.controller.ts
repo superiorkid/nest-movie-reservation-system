@@ -7,24 +7,25 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { Request } from 'express';
 import { Public } from 'src/common/decorators/public.decorator';
 import { JwtRefreshAuthGuard } from 'src/common/guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
 import { CreateUserDTO } from '../users/users.dto';
 import { AuthenticationService } from './authentication.service';
-import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthenticationController {
   constructor(private authService: AuthenticationService) {}
 
   @Public()
-  @Post('sign-in')
+  @Post('sign-up')
   async register(@Body() createUserDTO: CreateUserDTO) {
     return this.authService.register(createUserDTO);
   }
 
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
   async login(@Req() req: Request) {

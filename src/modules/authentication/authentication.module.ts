@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 import { EncryptModule } from 'src/shared/encrypt/encrypt.module';
 import { UsersModule } from '../users/users.module';
 import { AuthenticationController } from './authentication.controller';
@@ -34,6 +35,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     JwtStrategy,
     JwtRefreshStrategy,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
   controllers: [AuthenticationController],
 })

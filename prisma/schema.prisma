@@ -30,3 +30,45 @@ enum Role {
   USER
   ADMIN
 }
+
+model Genre {
+  id          Int              @id @default(autoincrement())
+  title       String
+  description String?          @db.Text
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  movies      GenresOnMovies[]
+
+  @@index([title])
+}
+
+model Movie {
+  id              String           @id @default(cuid())
+  title           String
+  description     String?          @db.Text
+  durationMinutes Int              @map("duration_minutes")
+  releaseDate     DateTime         @map("release_date")
+  language        String
+  posterUrl       String           @map("poster_url")
+  status          MovieStatus      @default(COMING_SOON)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  genres          GenresOnMovies[]
+
+  @@index([title, releaseDate, createdAt, status])
+}
+
+enum MovieStatus {
+  NOW_SHOWING
+  COMING_SOON
+  ARCHIVED
+}
+
+model GenresOnMovies {
+  movie   Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movieId String @map("movie_id")
+  genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  genreId Int    @map("genre_id")
+
+  @@id([movieId, genreId])
+}
