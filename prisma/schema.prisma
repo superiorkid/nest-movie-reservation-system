@@ -33,7 +33,7 @@ enum Role {
 
 model Genre {
   id          Int              @id @default(autoincrement())
-  title       String
+  title       String           @unique
   description String?          @db.Text
   createdAt   DateTime         @default(now()) @map("created_at")
   updatedAt   DateTime         @updatedAt @map("updated_at")

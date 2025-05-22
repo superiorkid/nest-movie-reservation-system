@@ -24,6 +24,10 @@ async function main() {
     },
   });
 
+  // TODO: seed for genre
+  // TODO: seed for movie
+  // TODO: seed for showtime
+
   console.log({ admin });
 }
 main()
