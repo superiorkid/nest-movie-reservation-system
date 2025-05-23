@@ -97,14 +97,22 @@ enum ShowtimeStatus {
   COMPLETED
 }
 
+model Location {
+  id       String    @id @default(cuid())
+  city     String
+  location String
+  theaters Theater[]
+}
+
 model Theater {
-  id        String     @id @default(cuid())
-  name      String
-  location  String // e.g., city, mall, street address
-  capacity  Int // number of  total seats
-  showtimes Showtime[]
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
+  id         String     @id @default(cuid())
+  name       String
+  capacity   Int // number of  total seats
+  showtimes  Showtime[]
+  location   Location   @relation(fields: [locationId], references: [id])
+  locationId String     @map("location_id")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
 }
 
 model Seat {
