@@ -98,10 +98,12 @@ enum ShowtimeStatus {
 }
 
 model Location {
-  id       String    @id @default(cuid())
-  city     String
-  location String
-  theaters Theater[]
+  id        String    @id @default(cuid())
+  city      String
+  address   String
+  theaters  Theater[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 }
 
 model Theater {
