@@ -109,15 +109,16 @@ model Location {
 }
 
 model Theater {
-  id         String     @id @default(cuid())
-  name       String
-  capacity   Int // number of  total seats
-  showtimes  Showtime[]
-  seats      Seat[]
-  location   Location   @relation(fields: [locationId], references: [id])
-  locationId String     @map("location_id")
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime   @updatedAt @map("updated_at")
+  id          String     @id @default(cuid())
+  name        String
+  capacity    Int // number of  total seats
+  seatsPerRow Int        @map("seats_per_row")
+  showtimes   Showtime[]
+  seats       Seat[]
+  location    Location   @relation(fields: [locationId], references: [id])
+  locationId  String     @map("location_id")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
 
   @@index([name, capacity])
 }
