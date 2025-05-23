@@ -7,8 +7,10 @@ export class TheatersRepository {
   constructor(private db: DatabaseService) {}
 
   async create(createTheaterDto: CreateTheatersDTO) {
-    const { capacity, locationId, name } = createTheaterDto;
-    return this.db.theater.create({ data: { name, capacity, locationId } });
+    const { capacity, locationId, name, seatsPerRow } = createTheaterDto;
+    return this.db.theater.create({
+      data: { name, capacity, locationId, seatsPerRow },
+    });
   }
 
   async findAll() {
@@ -18,10 +20,10 @@ export class TheatersRepository {
   }
 
   async update(id: string, updateTheaterDto: UpdateTheatersDTO) {
-    const { name, locationId, capacity } = updateTheaterDto;
+    const { name, locationId, capacity, seatsPerRow } = updateTheaterDto;
     return this.db.theater.update({
       where: { id },
-      data: { name, locationId, capacity },
+      data: { name, locationId, capacity, seatsPerRow },
     });
   }
 

@@ -11,6 +11,10 @@ export class CreateTheatersDTO {
   @IsNumber()
   capacity: number;
 
+  @Type(() => Number)
+  @IsNumber()
+  seatsPerRow: number;
+
   @IsString()
   @IsNotEmpty()
   locationId: string;
