@@ -54,6 +54,7 @@ model Movie {
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
   genres          GenresOnMovies[]
+  showtimes       Showtime[]
 
   @@index([title, releaseDate, createdAt, status])
 }
@@ -71,4 +72,16 @@ model GenresOnMovies {
   genreId Int    @map("genre_id")
 
   @@id([movieId, genreId])
+}
+
+model Showtime {
+  id        String   @id @default(cuid())
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movieId   String   @map("movie_id")
+  startTime DateTime @map("start_time")
+  endTime   DateTime @map("end_time")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([movieId])
 }

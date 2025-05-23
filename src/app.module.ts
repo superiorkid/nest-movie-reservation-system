@@ -4,11 +4,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { join } from 'path';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { GenresModule } from './modules/genres/genres.module';
 import { MoviesModule } from './modules/movies/movies.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
-import { GenresModule } from './modules/genres/genres.module';
 
 @Module({
   imports: [

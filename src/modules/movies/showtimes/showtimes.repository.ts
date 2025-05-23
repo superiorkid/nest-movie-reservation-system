@@ -1,0 +1,42 @@
+import { Injectable } from '@nestjs/common';
+import { DatabaseService } from 'src/shared/database/database.service';
+import { SaveToDB, UpdateShowtimeDTO } from './showtimes.dto';
+
+@Injectable()
+export class ShowtimesRepository {
+  constructor(private db: DatabaseService) {}
+
+  async findOneById(id: string) {
+    return this.db.showtime.findUnique({
+      where: { id },
+      include: { movie: true },
+    });
+  }
+
+  async findManyByMovieId(movieId: string) {
+    return this.db.showtime.findMany({ where: { movieId } });
+  }
+
+  async create(createShowtimeDto: SaveToDB) {
+    const { movieId, startTime, endTime } = createShowtimeDto;
+    return this.db.showtime.create({
+      data: {
+        movieId,
+        startTime,
+        endTime,
+      },
+    });
+  }
+
+  async update(id: string, updateShowtimeDTO: UpdateShowtimeDTO) {
+    const { endTime, movieId, startTime } = updateShowtimeDTO;
+    return this.db.showtime.update({
+      where: { id },
+      data: { movieId, startTime, endTime },
+    });
+  }
+
+  async delete(id: string) {
+    return this.db.showtime.delete({ where: { id } });
+  }
+}
