@@ -11,6 +11,8 @@ import { DatabaseModule } from './shared/database/database.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
 import { LocationsModule } from './modules/locations/locations.module';
 import { TheatersModule } from './modules/theaters/theaters.module';
+import { ShowtimeStatus } from '@prisma/client';
+import { ShowtimesModule } from './modules/showtimes/showtimes.module';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { TheatersModule } from './modules/theaters/theaters.module';
     GenresModule,
     LocationsModule,
     TheatersModule,
+    ShowtimesModule,
   ],
   controllers: [],
   providers: [],
