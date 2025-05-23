@@ -75,20 +75,20 @@ model GenresOnMovies {
 }
 
 model Showtime {
-  id        String         @id @default(cuid())
-  movie     Movie          @relation(fields: [movieId], references: [id], onDelete: Cascade)
-  movieId   String         @map("movie_id")
-  startTime DateTime       @map("start_time")
-  endTime   DateTime       @map("end_time")
-  theater   Theater        @relation(fields: [theaterId], references: [id])
-  theaterId String         @map("theater_id")
-  status    ShowtimeStatus @default(SCHEDULED)
-  price     Decimal        @default(0.00)
-  seats     Seat[]
-  createdAt DateTime       @default(now()) @map("created_at")
-  updatedAt DateTime       @updatedAt @map("updated_at")
+  id               String            @id @default(cuid())
+  movie            Movie             @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movieId          String            @map("movie_id")
+  startTime        DateTime          @map("start_time")
+  endTime          DateTime          @map("end_time")
+  theater          Theater           @relation(fields: [theaterId], references: [id])
+  theaterId        String            @map("theater_id")
+  status           ShowtimeStatus    @default(SCHEDULED)
+  price            Decimal           @default(0.00)
+  seatReservations SeatReservation[]
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
 
-  @@index([movieId, theaterId])
+  @@index([movieId, theaterId, startTime])
 }
 
 enum ShowtimeStatus {
@@ -104,6 +104,8 @@ model Location {
   theaters  Theater[]
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([city, address])
 }
 
 model Theater {
@@ -111,6 +113,7 @@ model Theater {
   name       String
   capacity   Int // number of  total seats
   showtimes  Showtime[]
+  seats      Seat[]
   location   Location   @relation(fields: [locationId], references: [id])
   locationId String     @map("location_id")
   createdAt  DateTime   @default(now()) @map("created_at")
@@ -120,11 +123,25 @@ model Theater {
 }
 
 model Seat {
+  id               String            @id @default(cuid())
+  seatNumber       String            @map("seat_number")
+  theater          Theater           @relation(fields: [theaterId], references: [id])
+  theaterId        String            @map("theater_id")
+  seatReservations SeatReservation[]
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
+  @@index([seatNumber])
+}
+
+model SeatReservation {
   id         String   @id @default(cuid())
+  seat       Seat     @relation(fields: [seatId], references: [id])
+  seatId     String   @map("seat_id")
   showtime   Showtime @relation(fields: [showtimeId], references: [id])
   showtimeId String   @map("showtime_id")
-  seatNumber String   @map("seat_number")
-  isBooked   Boolean  @default(false)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@index([seatId, showtimeId])
 }
