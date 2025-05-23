@@ -2,6 +2,10 @@ import { PartialType } from '@nestjs/mapped-types';
 import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateShowtimeDTO {
+  @IsNotEmpty()
+  @IsString()
+  movieId: string;
+
   @IsDateString()
   @IsNotEmpty()
   startTime: Date;
@@ -11,10 +15,4 @@ export class CreateShowtimeDTO {
   endTime: Date;
 }
 
-export class SaveToDB extends CreateShowtimeDTO {
-  @IsNotEmpty()
-  @IsString()
-  movieId: string;
-}
-
-export class UpdateShowtimeDTO extends PartialType(SaveToDB) {}
+export class UpdateShowtimeDTO extends PartialType(CreateShowtimeDTO) {}

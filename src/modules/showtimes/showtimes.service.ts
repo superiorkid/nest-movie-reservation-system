@@ -3,8 +3,8 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { MoviesRepository } from '../movies.repository';
-import { SaveToDB, UpdateShowtimeDTO } from './showtimes.dto';
+import { MoviesRepository } from '../movies/movies.repository';
+import { CreateShowtimeDTO, UpdateShowtimeDTO } from './showtimes.dto';
 import { ShowtimesRepository } from './showtimes.repository';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class ShowtimesService {
     }
   }
 
-  async createShowtime(createShowtimeDto: SaveToDB) {
+  async createShowtime(createShowtimeDto: CreateShowtimeDTO) {
     const movieExists = await this.movieRepository.findOneById(
       createShowtimeDto.movieId,
     );

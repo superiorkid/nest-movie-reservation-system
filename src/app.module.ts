@@ -9,6 +9,7 @@ import { MoviesModule } from './modules/movies/movies.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
+import { ShowtimesModule } from './modules/showtimes/showtimes.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EncryptModule } from './shared/encrypt/encrypt.module';
     EncryptModule,
     MoviesModule,
     GenresModule,
+    ShowtimesModule,
   ],
   controllers: [],
   providers: [],

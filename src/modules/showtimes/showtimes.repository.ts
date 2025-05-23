@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/shared/database/database.service';
-import { SaveToDB, UpdateShowtimeDTO } from './showtimes.dto';
+import { CreateShowtimeDTO, UpdateShowtimeDTO } from './showtimes.dto';
 
 @Injectable()
 export class ShowtimesRepository {
@@ -17,7 +17,7 @@ export class ShowtimesRepository {
     return this.db.showtime.findMany({ where: { movieId } });
   }
 
-  async create(createShowtimeDto: SaveToDB) {
+  async create(createShowtimeDto: CreateShowtimeDTO) {
     const { movieId, startTime, endTime } = createShowtimeDto;
     return this.db.showtime.create({
       data: {

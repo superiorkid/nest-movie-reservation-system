@@ -6,28 +6,23 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CreateShowtimeDTO, UpdateShowtimeDTO } from './showtimes.dto';
 import { ShowtimesService } from './showtimes.service';
 
-@Controller('movies/:movieId/showtimes')
+@Controller('showtimes')
 export class ShowtimesController {
   constructor(private showtimeService: ShowtimesService) {}
 
   @Get()
-  async findAll(@Param('movieId') movieId: string) {
+  async findAll(@Query('movie_id') movieId: string) {
     return this.showtimeService.findShowtimesByMovieId(movieId);
   }
 
   @Post()
-  async create(
-    @Param('movieId') movieId: string,
-    @Body() createShowtimeDto: CreateShowtimeDTO,
-  ) {
-    return this.showtimeService.createShowtime({
-      ...createShowtimeDto,
-      movieId,
-    });
+  async create(@Body() createShowtimeDto: CreateShowtimeDTO) {
+    return this.showtimeService.createShowtime(createShowtimeDto);
   }
 
   @Get(':id')
@@ -37,14 +32,10 @@ export class ShowtimesController {
 
   @Put(':id')
   async update(
-    @Param('movieId') movieId: string,
     @Param('id') id: string,
     @Body() updateShowtimeDto: UpdateShowtimeDTO,
   ) {
-    return this.showtimeService.updateShowtime(id, {
-      ...updateShowtimeDto,
-      movieId,
-    });
+    return this.showtimeService.updateShowtime(id, updateShowtimeDto);
   }
 
   @Delete(':id')
