@@ -79,7 +79,7 @@ export class LocationService {
     }
   }
 
-  async delete(id: string) {
+  async deleteLocation(id: string) {
     const location = await this.locationRepository.findOneById(id);
     if (!location) throw new NotFoundException('location not found.');
     try {

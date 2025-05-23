@@ -10,6 +10,7 @@ import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
 import { LocationsModule } from './modules/locations/locations.module';
+import { TheatersModule } from './modules/theaters/theaters.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { LocationsModule } from './modules/locations/locations.module';
     MoviesModule,
     GenresModule,
     LocationsModule,
+    TheatersModule,
   ],
   controllers: [],
   providers: [],
