@@ -14,14 +14,15 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  username     String   @unique
-  password     String?
-  role         Role     @default(USER)
-  refreshToken String?  @map("refresh_token")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id               String            @id @default(cuid())
+  email            String            @unique
+  username         String            @unique
+  password         String?
+  role             Role              @default(USER)
+  refreshToken     String?           @map("refresh_token")
+  seatReservations SeatReservation[]
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
 
   @@index([email, username, createdAt])
 }
@@ -80,7 +81,7 @@ model Showtime {
   movieId          String            @map("movie_id")
   startTime        DateTime          @map("start_time")
   endTime          DateTime          @map("end_time")
-  theater          Theater           @relation(fields: [theaterId], references: [id])
+  theater          Theater           @relation(fields: [theaterId], references: [id], onDelete: Cascade)
   theaterId        String            @map("theater_id")
   status           ShowtimeStatus    @default(SCHEDULED)
   price            Decimal           @default(0.00)
@@ -115,8 +116,8 @@ model Theater {
   seatsPerRow Int        @map("seats_per_row")
   showtimes   Showtime[]
   seats       Seat[]
-  location    Location   @relation(fields: [locationId], references: [id])
-  locationId  String     @map("location_id")
+  location    Location?  @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  locationId  String?    @map("location_id")
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
@@ -126,7 +127,8 @@ model Theater {
 model Seat {
   id               String            @id @default(cuid())
   seatNumber       String            @map("seat_number")
-  theater          Theater           @relation(fields: [theaterId], references: [id])
+  isActive         Boolean           @default(true)
+  theater          Theater           @relation(fields: [theaterId], references: [id], onDelete: Cascade)
   theaterId        String            @map("theater_id")
   seatReservations SeatReservation[]
   createdAt        DateTime          @default(now()) @map("created_at")
@@ -141,6 +143,8 @@ model SeatReservation {
   seatId     String   @map("seat_id")
   showtime   Showtime @relation(fields: [showtimeId], references: [id])
   showtimeId String   @map("showtime_id")
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @map("user_id")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
