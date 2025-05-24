@@ -15,7 +15,7 @@ export class TheatersRepository {
 
   async findAll() {
     return this.db.theater.findMany({
-      include: { location: true, showtimes: true },
+      include: { location: true, showtimes: true, seats: true },
     });
   }
 

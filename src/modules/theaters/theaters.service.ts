@@ -82,7 +82,7 @@ export class TheatersService {
     const existingTheater = await this.theaterRepository.findOneById(id);
     if (!existingTheater) throw new NotFoundException('theater not found');
 
-    const { name, locationId } = updateTheaterDto;
+    const { name, locationId, capacity, seatsPerRow } = updateTheaterDto;
     if (
       (name && name !== existingTheater.name) ||
       (locationId && locationId !== existingTheater.locationId)
@@ -101,7 +101,23 @@ export class TheatersService {
     }
 
     try {
+      const shouldUpdateSeats =
+        (capacity !== undefined && capacity !== existingTheater.capacity) ||
+        (seatsPerRow !== undefined &&
+          seatsPerRow !== existingTheater.seatsPerRow);
+
       await this.theaterRepository.update(id, updateTheaterDto);
+
+      if (shouldUpdateSeats) {
+        await this.seatsRepository.deleteManyByTheaterId(id);
+        const seatsNumbers = generateSeatNumbers(
+          capacity || 0,
+          seatsPerRow || 0,
+        );
+
+        await this.seatsRepository.createMany(id, seatsNumbers);
+      }
+
       return {
         success: true,
         message: 'theater updated successfully',

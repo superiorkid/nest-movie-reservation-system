@@ -25,6 +25,7 @@ model User {
   updatedAt        DateTime          @updatedAt @map("updated_at")
 
   @@index([email, username, createdAt])
+  @@map("users")
 }
 
 enum Role {
@@ -41,6 +42,7 @@ model Genre {
   movies      GenresOnMovies[]
 
   @@index([title])
+  @@map("genres")
 }
 
 model Movie {
@@ -58,6 +60,7 @@ model Movie {
   updatedAt       DateTime         @updatedAt @map("updated_at")
 
   @@index([title, releaseDate, createdAt, status])
+  @@map("movies")
 }
 
 enum MovieStatus {
@@ -73,6 +76,7 @@ model GenresOnMovies {
   genreId Int    @map("genre_id")
 
   @@id([movieId, genreId])
+  @@map("genres_on_movies")
 }
 
 model Showtime {
@@ -90,6 +94,7 @@ model Showtime {
   updatedAt        DateTime          @updatedAt @map("updated_at")
 
   @@index([movieId, theaterId, startTime])
+  @@map("showtimes")
 }
 
 enum ShowtimeStatus {
@@ -107,6 +112,7 @@ model Location {
   updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@index([city, address])
+  @@map("locations")
 }
 
 model Theater {
@@ -122,6 +128,7 @@ model Theater {
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
   @@index([name, capacity])
+  @@map("theaters")
 }
 
 model Seat {
@@ -135,6 +142,7 @@ model Seat {
   updatedAt        DateTime          @updatedAt @map("updated_at")
 
   @@index([seatNumber])
+  @@map("seats")
 }
 
 model SeatReservation {
@@ -149,4 +157,5 @@ model SeatReservation {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@index([seatId, showtimeId])
+  @@map("seat_reservations")
 }

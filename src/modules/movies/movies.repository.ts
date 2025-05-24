@@ -78,10 +78,16 @@ export class MoviesRepository {
   }
 
   async findMany() {
-    return this.db.movie.findMany({ orderBy: { releaseDate: 'desc' } });
+    return this.db.movie.findMany({
+      orderBy: { releaseDate: 'desc' },
+      include: { genres: { include: { genre: true } } },
+    });
   }
 
   async findOne(id: string) {
-    return this.db.movie.findUnique({ where: { id } });
+    return this.db.movie.findUnique({
+      where: { id },
+      include: { genres: true },
+    });
   }
 }

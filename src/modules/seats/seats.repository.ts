@@ -38,6 +38,10 @@ export class SeatsRepository {
     return this.db.seat.delete({ where: { id } });
   }
 
+  async deleteManyByTheaterId(theaterId: string) {
+    return this.db.seat.deleteMany({ where: { theaterId } });
+  }
+
   update(id: string, updateSeatDto: UpdateSeatsDTO) {
     const { isActive, seatNumber } = updateSeatDto;
     return this.db.seat.update({
