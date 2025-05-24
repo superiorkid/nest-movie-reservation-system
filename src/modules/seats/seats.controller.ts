@@ -36,5 +36,7 @@ export class SeatsController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {}
+  async delete(@Param('id') id: string) {
+    return this.seatsService.deleteSeat(id);
+  }
 }
