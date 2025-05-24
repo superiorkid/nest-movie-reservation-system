@@ -3,9 +3,10 @@ import { DatabaseModule } from 'src/shared/database/database.module';
 import { TheatersController } from './theaters.controller';
 import { TheatersRepository } from './theaters.repository';
 import { TheatersService } from './theaters.service';
+import { SeatModule } from '../seats/seats.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, SeatModule],
   controllers: [TheatersController],
   providers: [TheatersRepository, TheatersService],
   exports: [TheatersRepository],

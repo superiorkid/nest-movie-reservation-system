@@ -13,6 +13,7 @@ import { LocationsModule } from './modules/locations/locations.module';
 import { TheatersModule } from './modules/theaters/theaters.module';
 import { ShowtimeStatus } from '@prisma/client';
 import { ShowtimesModule } from './modules/showtimes/showtimes.module';
+import { SeatModule } from './modules/seats/seats.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ShowtimesModule } from './modules/showtimes/showtimes.module';
     LocationsModule,
     TheatersModule,
     ShowtimesModule,
+    SeatModule,
   ],
   controllers: [],
   providers: [],

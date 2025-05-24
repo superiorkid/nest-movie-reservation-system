@@ -4,12 +4,17 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import generateSeatNumbers from 'src/common/utils/generate-seat-numbers';
+import { SeatsRepository } from '../seats/seats.repository';
 import { TheatersRepository } from './theaters.repository';
 import { CreateTheatersDTO, UpdateTheatersDTO } from './theates.dto';
 
 @Injectable()
 export class TheatersService {
-  constructor(private theaterRepository: TheatersRepository) {}
+  constructor(
+    private theaterRepository: TheatersRepository,
+    private seatsRepository: SeatsRepository,
+  ) {}
 
   async createTheater(createTheaterDto: CreateTheatersDTO) {
     const { locationId, name } = createTheaterDto;
@@ -24,7 +29,16 @@ export class TheatersService {
       );
 
     try {
-      await this.theaterRepository.create(createTheaterDto);
+      const theater = await this.theaterRepository.create(createTheaterDto);
+
+      // generate seat here
+      const seatsNumbers = generateSeatNumbers(
+        theater.capacity,
+        theater.seatsPerRow,
+      );
+
+      await this.seatsRepository.createMany(theater.id, seatsNumbers);
+
       return {
         success: true,
         message: 'create theater successfully',
