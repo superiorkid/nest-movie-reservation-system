@@ -8,16 +8,21 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CreateShowtimeDTO, UpdateShowtimeDTO } from './showtimes.dto';
+import {
+  CreateShowtimeDTO,
+  ShowtimeFilters,
+  UpdateShowtimeDTO,
+} from './showtimes.dto';
 import { ShowtimesService } from './showtimes.service';
+import { filter } from 'rxjs';
 
 @Controller('showtimes')
 export class ShowtimesController {
   constructor(private showtimeService: ShowtimesService) {}
 
   @Get()
-  async findAll(@Query('movie_id') movieId: string) {
-    return this.showtimeService.findShowtimesByMovieId(movieId);
+  async findAll(@Query() filters: ShowtimeFilters) {
+    return this.showtimeService.findShowtimesByMovieId(filters.movie_id);
   }
 
   @Post()

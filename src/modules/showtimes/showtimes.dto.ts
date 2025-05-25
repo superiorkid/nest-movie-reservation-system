@@ -33,3 +33,9 @@ export class CreateShowtimeDTO {
 }
 
 export class UpdateShowtimeDTO extends PartialType(CreateShowtimeDTO) {}
+
+export class ShowtimeFilters {
+  @IsString()
+  @IsNotEmpty()
+  movie_id: string;
+}

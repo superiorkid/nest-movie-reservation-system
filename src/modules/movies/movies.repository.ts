@@ -10,7 +10,7 @@ export class MoviesRepository {
   async findOneById(id: string) {
     return this.db.movie.findUnique({
       where: { id },
-      include: { genres: true },
+      include: { genres: { include: { genre: true } } },
     });
   }
 
