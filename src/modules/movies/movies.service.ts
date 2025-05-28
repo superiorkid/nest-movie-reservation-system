@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { FileUploadService } from 'src/shared/file-upload/file-upload.service';
-import { CreateMovieDTO, UpdateMovieDTO } from './movies.dto';
+import { CreateMovieDTO, QueryFilters, UpdateMovieDTO } from './movies.dto';
 import { MoviesRepository } from './movies.repository';
 
 @Injectable()
@@ -104,16 +104,16 @@ export class MoviesService {
     }
   }
 
-  async findMany() {
+  async findMany(filters: QueryFilters) {
     try {
-      const movies = await this.moviesRepository.findMany();
+      const movies = await this.moviesRepository.findMany(filters);
       return {
         success: true,
         message: 'Get movies successfully',
         data: movies,
       };
     } catch (error) {
-      console.error('');
+      console.error(error.message);
       throw new InternalServerErrorException('failed to get movies');
     }
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MovieStatus } from '@prisma/client';
 import { DatabaseService } from 'src/shared/database/database.service';
-import { SaveToDB, UpdateSaveToDB } from './movies.dto';
+import { QueryFilters, SaveToDB, UpdateSaveToDB } from './movies.dto';
 
 @Injectable()
 export class MoviesRepository {
@@ -77,11 +77,30 @@ export class MoviesRepository {
     return this.db.movie.update({ where: { id }, data: dataToUpdate });
   }
 
-  async findMany() {
+  async findMany(filters: QueryFilters) {
+    const { date } = filters;
+    const dateObject = date ? new Date(date) : null;
     return this.db.movie.findMany({
-      orderBy: { releaseDate: 'desc' },
-      include: { genres: { include: { genre: true } } },
+      where: dateObject
+        ? {
+            showtimes: {
+              some: {
+                startTime: {
+                  gte: new Date(dateObject.setHours(0, 0, 0, 0)),
+                  lt: new Date(dateObject.setHours(23, 59, 59, 999)),
+                },
+              },
+            },
+          }
+        : undefined,
+      include: {
+        genres: { include: { genre: true } },
+      },
     });
+    // return this.db.movie.findMany({
+    //   orderBy: { releaseDate: 'desc' },
+    //   include: { genres: { include: { genre: true } } },
+    // });
   }
 
   async findOne(id: string) {

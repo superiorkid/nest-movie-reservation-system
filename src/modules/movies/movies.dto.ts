@@ -73,3 +73,9 @@ export class UpdateSaveToDB extends PartialType(
   @IsOptional()
   posterUrl?: string;
 }
+
+export class QueryFilters {
+  @IsDateString()
+  @IsOptional()
+  date?: Date;
+}

@@ -6,11 +6,12 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { FormDataRequest } from 'nestjs-form-data';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { CreateMovieDTO, UpdateMovieDTO } from './movies.dto';
+import { CreateMovieDTO, QueryFilters, UpdateMovieDTO } from './movies.dto';
 import { MoviesService } from './movies.service';
 
 @Controller('movies')
@@ -18,8 +19,9 @@ export class MoviesController {
   constructor(private moviesService: MoviesService) {}
 
   @Get()
-  async findMany() {
-    return this.moviesService.findMany();
+  async findMany(@Query() filters: QueryFilters) {
+    console.log('filters', filters);
+    return this.moviesService.findMany(filters);
   }
 
   @Post()
