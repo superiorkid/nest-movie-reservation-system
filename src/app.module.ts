@@ -5,15 +5,15 @@ import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { join } from 'path';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { GenresModule } from './modules/genres/genres.module';
+import { LocationsModule } from './modules/locations/locations.module';
 import { MoviesModule } from './modules/movies/movies.module';
+import { SeatReservationModule } from './modules/seat-reservations/seat-reservation.module';
+import { SeatModule } from './modules/seats/seats.module';
+import { ShowtimesModule } from './modules/showtimes/showtimes.module';
+import { TheatersModule } from './modules/theaters/theaters.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
-import { LocationsModule } from './modules/locations/locations.module';
-import { TheatersModule } from './modules/theaters/theaters.module';
-import { ShowtimeStatus } from '@prisma/client';
-import { ShowtimesModule } from './modules/showtimes/showtimes.module';
-import { SeatModule } from './modules/seats/seats.module';
 
 @Module({
   imports: [
@@ -33,6 +33,7 @@ import { SeatModule } from './modules/seats/seats.module';
     TheatersModule,
     ShowtimesModule,
     SeatModule,
+    SeatReservationModule,
   ],
   controllers: [],
   providers: [],

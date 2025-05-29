@@ -14,15 +14,15 @@ datasource db {
 }
 
 model User {
-  id               String            @id @default(cuid())
-  email            String            @unique
-  username         String            @unique
-  password         String?
-  role             Role              @default(USER)
-  refreshToken     String?           @map("refresh_token")
-  seatReservations SeatReservation[]
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
+  id           String        @id @default(cuid())
+  email        String        @unique
+  username     String        @unique
+  password     String?
+  role         Role          @default(USER)
+  refreshToken String?       @map("refresh_token")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  reservations Reservation[]
 
   @@index([email, username, createdAt])
   @@map("users")
@@ -92,6 +92,7 @@ model Showtime {
   seatReservations SeatReservation[]
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
+  Reservation      Reservation[]
 
   @@index([movieId, theaterId, startTime])
   @@map("showtimes")
@@ -137,6 +138,7 @@ model Seat {
   isActive         Boolean           @default(true)
   theater          Theater           @relation(fields: [theaterId], references: [id], onDelete: Cascade)
   theaterId        String            @map("theater_id")
+  seatPrice        Decimal           @default(0.00) @map("seat_price")
   seatReservations SeatReservation[]
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
@@ -146,16 +148,37 @@ model Seat {
 }
 
 model SeatReservation {
-  id         String   @id @default(cuid())
-  seat       Seat     @relation(fields: [seatId], references: [id])
-  seatId     String   @map("seat_id")
-  showtime   Showtime @relation(fields: [showtimeId], references: [id])
-  showtimeId String   @map("showtime_id")
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String   @map("user_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id            String      @id @default(cuid())
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservationId String      @map("reservation_id")
+  seat          Seat        @relation(fields: [seatId], references: [id])
+  seatId        String      @map("seat_id")
+  showtime      Showtime    @relation(fields: [showtimeId], references: [id])
+  showtimeId    String      @map("showtime_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
 
-  @@index([seatId, showtimeId])
+  @@unique([seatId, showtimeId])
   @@map("seat_reservations")
+}
+
+model Reservation {
+  id               String            @id @default(cuid())
+  user             User              @relation(fields: [userId], references: [id])
+  userId           String
+  showtime         Showtime          @relation(fields: [showtimeId], references: [id])
+  showtimeId       String
+  totalPrice       Decimal           @default(0.00) @map("total_price")
+  status           ReservationStatus @default(PENDING)
+  seatReservations SeatReservation[]
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
+  @@map("reservations")
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
 }

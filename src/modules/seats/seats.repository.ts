@@ -49,4 +49,10 @@ export class SeatsRepository {
       data: { seatNumber, isActive },
     });
   }
+
+  async findManyByIds(ids: string[]) {
+    return this.db.seat.findMany({
+      where: { id: { in: ids } },
+    });
+  }
 }
