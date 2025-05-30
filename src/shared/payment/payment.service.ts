@@ -17,6 +17,7 @@ export class PaymentService {
   constructor(
     private configService: ConfigService,
 
+    @Inject(forwardRef(() => ReservationService))
     private reservationService: ReservationService,
   ) {
     this.stripe = new Stripe(

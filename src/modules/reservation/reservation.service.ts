@@ -25,7 +25,7 @@ export class ReservationService {
     private seatRepository: SeatsRepository,
     private showtimeRepository: ShowtimesRepository,
     private seatReservationRepository: SeatReservationRepository,
-
+    @Inject(forwardRef(() => PaymentService))
     private stripe: PaymentService,
   ) {}
 
