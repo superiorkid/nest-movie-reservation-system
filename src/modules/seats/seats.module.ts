@@ -10,6 +10,4 @@ import { SeatsService } from './seats.service';
   providers: [SeatsRepository, SeatsService],
   exports: [SeatsRepository],
 })
-export class SeatModule {
-  constructor() {}
-}
+export class SeatModule {}

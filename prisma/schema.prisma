@@ -92,7 +92,7 @@ model Showtime {
   seatReservations SeatReservation[]
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
-  Reservation      Reservation[]
+  reservations      Reservation[]
 
   @@index([movieId, theaterId, startTime])
   @@map("showtimes")
@@ -136,6 +136,8 @@ model Seat {
   id               String            @id @default(cuid())
   seatNumber       String            @map("seat_number")
   isActive         Boolean           @default(true)
+  isLocked Boolean @default(false)
+  lockedUntil DateTime?
   theater          Theater           @relation(fields: [theaterId], references: [id], onDelete: Cascade)
   theaterId        String            @map("theater_id")
   seatPrice        Decimal           @default(0.00) @map("seat_price")
@@ -170,6 +172,9 @@ model Reservation {
   showtimeId       String
   totalPrice       Decimal           @default(0.00) @map("total_price")
   status           ReservationStatus @default(PENDING)
+  paymentIntentId String? @map("payment_intent_id") @unique
+  paymentMethod String? @map("payment_method")
+  paidAt DateTime? @map("paid_at")
   seatReservations SeatReservation[]
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")

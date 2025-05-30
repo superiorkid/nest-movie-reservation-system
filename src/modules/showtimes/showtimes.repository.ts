@@ -9,7 +9,7 @@ export class ShowtimesRepository {
   async findOneById(id: string) {
     return this.db.showtime.findUnique({
       where: { id },
-      include: { movie: true },
+      include: { movie: true, theater: true },
     });
   }
 

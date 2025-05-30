@@ -9,3 +9,9 @@ export class CreateReservationDTO {
   @ArrayMinSize(1)
   seatIds: string[];
 }
+
+export class GetAvailableSeatsDTO {
+  @IsString()
+  @IsNotEmpty()
+  showtimeId: string;
+}

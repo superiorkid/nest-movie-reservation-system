@@ -55,4 +55,32 @@ export class SeatsRepository {
       where: { id: { in: ids } },
     });
   }
+
+  async findManyByTheaterAndIsActive(params: {
+    theaterId: string;
+    isActive: boolean;
+  }) {
+    const { isActive, theaterId } = params;
+    return this.db.seat.findMany({
+      where: {
+        theaterId,
+        isActive: true,
+        OR: [
+          { isLocked: false },
+          { lockedUntil: { lt: new Date() } }, // Include seats with expired locks
+        ],
+      },
+      orderBy: { seatNumber: 'asc' },
+    });
+  }
+
+  async clearExpiredLocks() {
+    await this.db.seat.updateMany({
+      where: { AND: [{ isLocked: true }, { lockedUntil: { lt: new Date() } }] },
+      data: {
+        isLocked: false,
+        lockedUntil: null,
+      },
+    });
+  }
 }

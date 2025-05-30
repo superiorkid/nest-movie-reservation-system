@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { join } from 'path';
@@ -13,7 +14,10 @@ import { ShowtimesModule } from './modules/showtimes/showtimes.module';
 import { TheatersModule } from './modules/theaters/theaters.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './shared/database/database.module';
+import { EmailModule } from './shared/email/email.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
+import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emitter.module';
+import { PaymentModule } from './shared/payment/payment.module';
 
 @Module({
   imports: [
@@ -23,7 +27,10 @@ import { EncryptModule } from './shared/encrypt/encrypt.module';
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     NestjsFormDataModule.config({ isGlobal: true, storage: MemoryStoredFile }),
+    EmailModule,
+    EventEmitterModule.forRoot(),
     UsersModule,
+    PaymentModule,
     AuthenticationModule,
     DatabaseModule,
     EncryptModule,
@@ -34,6 +41,7 @@ import { EncryptModule } from './shared/encrypt/encrypt.module';
     ShowtimesModule,
     SeatModule,
     SeatReservationModule,
+    TypedEventEmitterModule,
   ],
   controllers: [],
   providers: [],

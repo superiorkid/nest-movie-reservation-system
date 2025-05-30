@@ -10,4 +10,11 @@ export class SeatReservationRepository {
       where: { showtimeId, seatId: { in: seatIds } },
     });
   }
+
+  async findManyByShowtimeId(showtimeId: string) {
+    return this.db.seatReservation.findMany({
+      where: { showtimeId },
+      select: { seatId: true },
+    });
+  }
 }

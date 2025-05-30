@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ReservationStatus } from '@prisma/client';
 import { DatabaseService } from 'src/shared/database/database.service';
 
 @Injectable()
@@ -26,9 +27,31 @@ export class ReservationReposity {
     });
   }
 
-  async findMany() {}
+  async confirmReservationByPaymentIntent(paymentIntentId: string) {
+    return this.db.reservation.update({
+      where: { paymentIntentId },
+      data: {
+        status: ReservationStatus.CONFIRMED,
+        paidAt: new Date(),
+      },
+    });
+  }
 
-  async findOne() {}
-
-  async update() {}
+  async getReservationWithDetails(id: string) {
+    return this.db.reservation.findUnique({
+      where: { id },
+      include: {
+        user: { select: { email: true } },
+        showtime: {
+          include: {
+            movie: { select: { title: true } },
+            theater: { select: { name: true } },
+          },
+        },
+        seatReservations: {
+          include: { seat: { select: { seatNumber: true, seatPrice: true } } },
+        },
+      },
+    });
+  }
 }
