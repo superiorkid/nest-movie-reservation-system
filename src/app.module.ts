@@ -17,6 +17,7 @@ import { DatabaseModule } from './shared/database/database.module';
 import { EmailModule } from './shared/email/email.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
 import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emitter.module';
+import { ReservationModule } from './modules/reservation/reservation.module';
 import { PaymentModule } from './shared/payment/payment.module';
 
 @Module({
@@ -30,7 +31,6 @@ import { PaymentModule } from './shared/payment/payment.module';
     EmailModule,
     EventEmitterModule.forRoot(),
     UsersModule,
-    PaymentModule,
     AuthenticationModule,
     DatabaseModule,
     EncryptModule,
@@ -40,6 +40,8 @@ import { PaymentModule } from './shared/payment/payment.module';
     TheatersModule,
     ShowtimesModule,
     SeatModule,
+    PaymentModule,
+    ReservationModule,
     SeatReservationModule,
     TypedEventEmitterModule,
   ],
