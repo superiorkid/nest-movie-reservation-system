@@ -78,6 +78,9 @@ export class PaymentService {
       case 'payment_intent.payment_failed':
         await this.reservationService.handlePaymentFailed(event.data.object.id);
         break;
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+        break;
     }
   }
 }

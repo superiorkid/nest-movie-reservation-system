@@ -191,27 +191,25 @@ export class ReservationService {
   }
 
   async handlePaymentSuccess(paymentIntentId: string) {
-    this.logger.log('payment success trigger');
-    this.logger.log(paymentIntentId);
+    return this.db.$transaction(async (tx) => {
+      const reservation = await tx.reservation.update({
+        where: { paymentIntentId },
+        data: {
+          status: 'CONFIRMED',
+          paidAt: new Date(),
+        },
+        include: {
+          user: true,
+          showtime: { include: { movie: true, theater: true } },
+          seatReservations: { include: { seat: true } },
+        },
+      });
 
-    return { paymentIntentId };
-    // return this.db.$transaction(async (tx) => {
-    //   const reservation = await tx.reservation.update({
-    //     where: { paymentIntentId },
-    //     data: {
-    //       status: 'CONFIRMED',
-    //       paidAt: new Date(),
-    //     },
-    //     include: {
-    //       user: true,
-    //       showtime: { include: { movie: true, theater: true } },
-    //       seatReservations: { include: { seat: true } },
-    //     },
-    //   });
-    //   // send success email
-    //   //
-    //   return reservation;
-    // });
+      // send success email
+      //
+
+      return reservation;
+    });
   }
 
   async handlePaymentFailed(paymentIntentId: string) {
