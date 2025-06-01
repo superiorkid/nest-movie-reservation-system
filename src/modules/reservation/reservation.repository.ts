@@ -54,4 +54,21 @@ export class ReservationReposity {
       },
     });
   }
+
+  async findManyReservationByUserId(params: {
+    userId: string;
+    isUpcoming: boolean;
+  }) {
+    const { isUpcoming, userId } = params;
+    return this.db.reservation.findMany({
+      where: isUpcoming
+        ? { AND: [{ userId }, { showtime: { startTime: { gt: new Date() } } }] }
+        : { userId },
+      include: {
+        showtime: { include: { movie: true, theater: true } },
+        seatReservations: { include: { seat: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }
