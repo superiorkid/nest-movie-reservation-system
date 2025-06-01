@@ -44,4 +44,19 @@ export class ShowtimesRepository {
   async delete(id: string) {
     return this.db.showtime.delete({ where: { id } });
   }
+
+  async findMany() {
+    return this.db.showtime.findMany({
+      include: {
+        movie: true,
+        theater: true,
+        seatReservations: true,
+        reservations: {
+          where: {
+            status: 'CONFIRMED',
+          },
+        },
+      },
+    });
+  }
 }

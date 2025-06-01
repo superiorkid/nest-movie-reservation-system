@@ -78,4 +78,17 @@ export class ReservationReposity {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  async findMany() {
+    return this.db.reservation.findMany({
+      include: {
+        user: true,
+        showtime: { include: { movie: true, theater: true } },
+        seatReservations: { include: { seat: true } },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }

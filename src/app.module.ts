@@ -19,6 +19,7 @@ import { EmailModule } from './shared/email/email.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
 import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emitter.module';
 import { PaymentModule } from './shared/payment/payment.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { PaymentModule } from './shared/payment/payment.module';
     ReservationModule,
     SeatReservationModule,
     TypedEventEmitterModule,
+    AdminModule,
   ],
   controllers: [],
   providers: [],
