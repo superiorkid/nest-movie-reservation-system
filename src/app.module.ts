@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { join } from 'path';
+import { AdminModule } from './modules/admin/admin.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { GenresModule } from './modules/genres/genres.module';
 import { LocationsModule } from './modules/locations/locations.module';
@@ -19,7 +22,6 @@ import { EmailModule } from './shared/email/email.module';
 import { EncryptModule } from './shared/encrypt/encrypt.module';
 import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emitter.module';
 import { PaymentModule } from './shared/payment/payment.module';
-import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -28,6 +30,9 @@ import { AdminModule } from './modules/admin/admin.module';
       serveRoot: '/assets',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot({
+      throttlers: [{ ttl: 60000, limit: 10 }],
+    }),
     NestjsFormDataModule.config({ isGlobal: true, storage: MemoryStoredFile }),
     EmailModule,
     EventEmitterModule.forRoot(),
@@ -48,6 +53,6 @@ import { AdminModule } from './modules/admin/admin.module';
     AdminModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
