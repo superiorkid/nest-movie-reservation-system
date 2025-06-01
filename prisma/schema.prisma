@@ -151,11 +151,11 @@ model Seat {
 
 model SeatReservation {
   id            String      @id @default(cuid())
-  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
   reservationId String      @map("reservation_id")
-  seat          Seat        @relation(fields: [seatId], references: [id])
+  seat          Seat        @relation(fields: [seatId], references: [id], onDelete: Cascade)
   seatId        String      @map("seat_id")
-  showtime      Showtime    @relation(fields: [showtimeId], references: [id])
+  showtime      Showtime    @relation(fields: [showtimeId], references: [id], onDelete: Cascade)
   showtimeId    String      @map("showtime_id")
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @updatedAt @map("updated_at")
@@ -166,15 +166,15 @@ model SeatReservation {
 
 model Reservation {
   id               String            @id @default(cuid())
-  user             User              @relation(fields: [userId], references: [id])
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String
-  showtime         Showtime          @relation(fields: [showtimeId], references: [id])
+  showtime         Showtime          @relation(fields: [showtimeId], references: [id], onDelete: Cascade)
   showtimeId       String
   totalPrice       Decimal           @default(0.00) @map("total_price")
   status           ReservationStatus @default(PENDING)
-  paymentIntentId String? @map("payment_intent_id") @unique
-  paymentMethod String? @map("payment_method")
-  paidAt DateTime? @map("paid_at")
+  paymentIntentId  String? @map("payment_intent_id") @unique
+  paymentMethod    String? @map("payment_method")
+  paidAt           DateTime? @map("paid_at")
   seatReservations SeatReservation[]
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")

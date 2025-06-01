@@ -50,6 +50,33 @@ export class PaymentService {
     }
   }
 
+  async createCheckoutSession(params: {
+    lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    metadata: Stripe.MetadataParam;
+    successUrl: string;
+  }) {
+    const { metadata, lineItems, successUrl } = params;
+
+    try {
+      const session = await this.stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'payment',
+        line_items: lineItems,
+        metadata,
+        success_url: successUrl,
+      });
+
+      this.logger.log(
+        `Checkout Session created successfully with id: ${session.id}`,
+      );
+
+      return session;
+    } catch (error) {
+      this.logger.error('failed to create checkout session', error.stack);
+      throw error;
+    }
+  }
+
   async constructWebhookEvent(payload: Buffer, signature: string) {
     return this.stripe.webhooks.constructEvent(
       payload,
@@ -60,6 +87,8 @@ export class PaymentService {
 
   async stripeWebhook(params: { signature: string; rawBody: Buffer }) {
     const { rawBody, signature } = params;
+
+    console.log('parmas', params);
 
     let event: Stripe.Event;
 

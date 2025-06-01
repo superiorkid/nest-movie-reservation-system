@@ -9,6 +9,7 @@ import {
 import { ReservationStatus, ShowtimeStatus } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 import { DatabaseService } from 'src/shared/database/database.service';
+import { TypedEventEmitter } from 'src/shared/event-emitter/typed-event-emitter.class';
 import { PaymentService } from 'src/shared/payment/payment.service';
 import { SeatReservationRepository } from '../seat-reservations/seat-reservation.repository';
 import { SeatsRepository } from '../seats/seats.repository';
@@ -24,6 +25,7 @@ export class ReservationService {
     private db: DatabaseService,
     private seatRepository: SeatsRepository,
     private showtimeRepository: ShowtimesRepository,
+    private eventEmitter: TypedEventEmitter,
     private seatReservationRepository: SeatReservationRepository,
     @Inject(forwardRef(() => PaymentService))
     private stripe: PaymentService,
@@ -134,11 +136,12 @@ export class ReservationService {
       });
 
       // Calculate price
-      const totalPrice = seatsToLock
-        .reduce((sum, seat) => sum.add(seat.seatPrice), new Decimal(0))
-        .add(showtime.price);
+      const totalPrice = seatsToLock.reduce(
+        (sum, seat) => sum.add(seat.seatPrice).add(showtime.price),
+        new Decimal(0),
+      );
 
-      // 6. Create payment intent
+      // Create payment intent
       const paymentIntent = await this.stripe.createPaymentIntent(
         totalPrice.toNumber(),
         'usd',
@@ -205,8 +208,11 @@ export class ReservationService {
         },
       });
 
-      // send success email
-      //
+      this.eventEmitter.emit('payment.success', {
+        user: reservation.user,
+        showtime: reservation.showtime,
+        seatReservations: reservation.seatReservations,
+      });
 
       return reservation;
     });
@@ -220,7 +226,10 @@ export class ReservationService {
         include: { user: true },
       });
 
-      // send payment cancelled email
+      this.eventEmitter.emit('payment.cancelled', {
+        email: reservation.user.email,
+        name: reservation.user.username,
+      });
 
       return reservation;
     });

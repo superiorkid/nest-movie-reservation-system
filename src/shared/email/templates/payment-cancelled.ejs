@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Payment Failed - Reservation Cancelled</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+      }
+      .header {
+        background: #f44336;
+        color: white;
+        padding: 10px;
+        text-align: center;
+      }
+      .content {
+        margin-top: 20px;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #666;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Payment Failed</h1>
+      </div>
+      <div class="content">
+        <p>Hi <%= locals.name %>,</p>
+        <p>
+          Unfortunately, your payment for the reservation was not successful,
+          and the reservation has been cancelled.
+        </p>
+        <p>Please try again or contact our support team if you need help.</p>
+        <p>We hope to see you soon!</p>
+      </div>
+      <div class="footer">
+        &copy; <%= new Date().getFullYear() %> Your Company. All rights
+        reserved.
+      </div>
+    </div>
+  </body>
+</html>

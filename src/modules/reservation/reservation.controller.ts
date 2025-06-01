@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
+import { FormDataRequest } from 'nestjs-form-data';
 import { CreateReservationDTO, GetAvailableSeatsDTO } from './reservation.dto';
 import { ReservationService } from './reservation.service';
 
@@ -13,6 +14,7 @@ export class ReservationController {
   }
 
   @Post()
+  @FormDataRequest()
   async create(
     @Req() req: Request,
     @Body() createReservationDto: CreateReservationDTO,

@@ -11,14 +11,27 @@ export class EmailService {
   async paymentSuccessEmail(data: EventPayloads['payment.success']) {
     const subject = `Payment successfully ${data}`;
     await this.mailerService.sendMail({
-      to: 'email_target',
+      to: data.user.email,
       subject,
       template: './payment-success',
       context: {
-        something: 'heelow',
+        user: data.user,
+        showtime: data.showtime,
+        seatReservations: data.seatReservations,
       },
     });
   }
 
-  async paymentCancelEmail() {}
+  @OnEvent('payment.cancelled')
+  async paymentCancelledEmail(data: EventPayloads['payment.cancelled']) {
+    const subject = 'Payment failed - Reservation Cancelled';
+    await this.mailerService.sendMail({
+      to: data.email,
+      subject,
+      template: './payment-cancelled',
+      context: {
+        name: data.name,
+      },
+    });
+  }
 }
