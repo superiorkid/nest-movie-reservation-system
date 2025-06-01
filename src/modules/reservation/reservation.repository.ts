@@ -6,6 +6,13 @@ import { DatabaseService } from 'src/shared/database/database.service';
 export class ReservationReposity {
   constructor(private db: DatabaseService) {}
 
+  async findOneById(id: string) {
+    return this.db.reservation.findUnique({
+      where: { id },
+      include: { showtime: true },
+    });
+  }
+
   async create(data: {
     userId: string;
     showtimeId: string;

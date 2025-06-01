@@ -1,8 +1,10 @@
 import {
   ConflictException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,6 +17,7 @@ import { SeatReservationRepository } from '../seat-reservations/seat-reservation
 import { SeatsRepository } from '../seats/seats.repository';
 import { ShowtimesRepository } from '../showtimes/showtimes.repository';
 import { GetAvailableSeatsDTO } from './reservation.dto';
+import { ReservationReposity } from './reservation.repository';
 
 @Injectable()
 export class ReservationService {
@@ -23,12 +26,13 @@ export class ReservationService {
 
   constructor(
     private db: DatabaseService,
-    private seatRepository: SeatsRepository,
-    private showtimeRepository: ShowtimesRepository,
-    private eventEmitter: TypedEventEmitter,
-    private seatReservationRepository: SeatReservationRepository,
     @Inject(forwardRef(() => PaymentService))
     private stripe: PaymentService,
+    private seatRepository: SeatsRepository,
+    private eventEmitter: TypedEventEmitter,
+    private showtimeRepository: ShowtimesRepository,
+    private reservationRepository: ReservationReposity,
+    private seatReservationRepository: SeatReservationRepository,
   ) {}
 
   async getAvailableSeats({ showtimeId }: GetAvailableSeatsDTO) {
@@ -233,5 +237,74 @@ export class ReservationService {
 
       return reservation;
     });
+  }
+
+  async cancelReservation(params: { userId: string; reservationId: string }) {
+    const { reservationId, userId } = params;
+    const reservation =
+      await this.reservationRepository.findOneById(reservationId);
+
+    if (!reservation) throw new NotFoundException('Reservation not found.');
+    if (reservation.userId !== userId)
+      throw new ForbiddenException('Not your reservation');
+
+    const isUpcoming = reservation.showtime.startTime > new Date();
+    if (!isUpcoming)
+      throw new ConflictException('Cannot cancel past reservation.');
+
+    if (
+      reservation.status === 'CANCELLED' ||
+      reservation.status === 'CONFIRMED'
+    ) {
+      throw new ConflictException('Reservation already cancelled or completed');
+    }
+
+    if (reservation.paymentIntentId) {
+      try {
+        await this.stripe.cancelPayment(reservation.paymentIntentId);
+        this.logger.log(
+          `PaymentIntent ${reservation.paymentIntentId} cancelled.`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to cancel payment ${reservation.paymentIntentId}.`,
+          error.stack,
+        );
+      }
+    }
+
+    try {
+      await Promise.all([
+        // mark reservation as cancelled
+        this.db.reservation.update({
+          where: { id: reservationId },
+          data: { status: ReservationStatus.CANCELLED },
+        }),
+        // release seats
+        this.db.seat.updateMany({
+          where: {
+            seatReservations: {
+              some: {
+                reservationId,
+              },
+            },
+          },
+          data: {
+            isLocked: false,
+            lockedUntil: null,
+          },
+        }),
+        // delete seat reservations
+        this.db.seatReservation.deleteMany({ where: { reservationId } }),
+      ]);
+
+      return {
+        success: true,
+        message: 'Reservation cancelled successfully',
+      };
+    } catch (error) {
+      this.logger.log(error.stack);
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

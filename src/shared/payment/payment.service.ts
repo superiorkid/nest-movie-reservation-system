@@ -50,6 +50,10 @@ export class PaymentService {
     }
   }
 
+  async cancelPayment(paymentIntentId: string) {
+    await this.stripe.paymentIntents.cancel(paymentIntentId);
+  }
+
   async createCheckoutSession(params: {
     lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     metadata: Stripe.MetadataParam;
